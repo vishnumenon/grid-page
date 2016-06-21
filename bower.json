@@ -24,6 +24,6 @@
   ],
   "dependencies": {
     "interact": "^1.2.6",
-    "jquery": "^3.0.0"
+    "jquery": "^1.8"
   }
 }
