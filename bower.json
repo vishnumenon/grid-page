@@ -5,7 +5,7 @@
     "Vishnu Menon <me@vishnumenon.com>"
   ],
   "description": "An angular plugin offering a Publisher-like page with movable and re-sizable pages",
-  "main": "grid-page.js",
+  "main": ["grid-page.js", "grid-page.css"],
   "keywords": [
     "Grid",
     "Angular",
