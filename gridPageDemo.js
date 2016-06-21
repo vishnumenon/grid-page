@@ -26,6 +26,6 @@ gridPageDemo.controller('DemoController', function DemoController($scope, $timeo
 			}, getRandomInt(0,2));
  		}
 
- 		$timeout(function() {gridControl.allowModification()});
+ 		gridControl.allowModification();
 	} 
 });	
