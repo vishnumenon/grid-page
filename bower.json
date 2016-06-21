@@ -1,0 +1,28 @@
+{
+  "name": "grid-page",
+  "homepage": "https://github.com/FarmShots/grid-page",
+  "authors": [
+    "Vishnu Menon <me@vishnumenon.com>"
+  ],
+  "description": "An angular plugin offering a Publisher-like page with movable and re-sizable pages",
+  "main": "grid-page.js",
+  "keywords": [
+    "Grid",
+    "Angular",
+    "Publisher",
+    "Document",
+    "Page"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "interact": "^1.2.6"
+  }
+}

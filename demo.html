@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="gridPageDemo">
+<head>
+	<meta charset="utf-8">
+	<title>Grid Page demo</title>
+	<link rel="stylesheet" href="grid-page.css">
+	<link rel="stylesheet" href="demo.css">
+	<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<script src="bower_components/jquery/dist/jquery.js"></script>
+	<script src="bower_components/angular/angular.js"></script>
+	<script src="bower_components/interact/dist/interact.js"></script>
+	<script src="grid-page.js"></script>
+	<script src="gridPageDemo.js"></script>
+</head>
+
+<body id="home" ng-controller="DemoController">
+
+	<h1>grid-page.js</h1>
+	<grid-page on-grid-load="gridCallback"></grid-page>
+
+</body>
+</html>
