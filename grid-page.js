@@ -6,6 +6,7 @@ angular.module('gridPage', [])
 })
 .directive('gridPage', function () {
     return {
+        replace: true,
         template: '<div class="grid-pages">' +
             '<div ng-repeat="page in state.pages" class="grid-page">' +
             '<div ng-repeat="component in page track by $index" data-uuid="{{component.uuid}}" ng-class="{\'grid-component\': true, \'draggable\': component.draggable}" ng-style="{\'position\': \'absolute\', \'width\': component.width + \'px\', \'height\': component.height + \'px\', \'top\': component.y + \'px\', \'left\': component.x + \'px\'}">' +
