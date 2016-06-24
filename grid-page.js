@@ -1,34 +1,42 @@
 angular.module('gridPage', [])
-.constant('MODULE_VERSION', '0.0.1')
+.constant('MODULE_VERSION', '0.0.2')
 .constant('gridDefaults', {
     size: 25,
-
+    pageClasses: ""
+})
+.directive('gridPageComponent', function() {
+    return {
+        replace: true,
+        template: '<div  ng-class="{\'grid-component\': true, \'mutable\': component.mutable}" ng-style="{\'position\': \'absolute\', \'width\': component.width + \'px\', \'height\': component.height + \'px\', \'top\': component.y + \'px\', \'left\': component.x + \'px\'}"></div>',
+        controller: function($scope, $compile, $element){
+            var compiledContent = $compile($scope.component.template)($scope);
+            $element.append(compiledContent);
+        }
+    }
 })
 .directive('gridPage', function () {
     return {
         replace: true,
         template: '<div class="grid-pages">' +
-            '<div ng-repeat="page in state.pages" class="grid-page">' +
-            '<div ng-repeat="component in page track by $index" data-uuid="{{component.uuid}}" ng-class="{\'grid-component\': true, \'draggable\': component.draggable}" ng-style="{\'position\': \'absolute\', \'width\': component.width + \'px\', \'height\': component.height + \'px\', \'top\': component.y + \'px\', \'left\': component.x + \'px\'}">' +
-            '</div>' +
+            '<div ng-repeat="page in state.pages" class="grid-page {{state.gridOptions.pageClasses}}">' +
+            '<grid-page-component ng-repeat="component in page track by $index" ng-if="!component.deleted"></grid-page-component>' +
             '</div>' +
             '</div>',
         scope: {
             'gridOptions': '=?',
-            'onGridLoad': '=?',
+            'ready': '=?',
             'onComponentChange': '=?'
         },
-        controller: function ($scope, $element, $timeout, $compile, gridDefaults) {
+        controller: function ($scope, $element, $timeout, gridDefaults) {
 
             // Components: {
-            //	  uuid: a uuid, required
-            // 	  width: required
-            // 	  height: required
-            // 	  x: (if placing)
-            // 	  y: (if placing)
-            // 	  template: required
-            //	  page: (if placing)
-            //	  draggable: true/false 
+            //    width: required
+            //    height: required
+            //    x: (if placing)
+            //    y: (if placing)
+            //    template: required
+            //    page: (if placing)
+            //    mutable: true/false 
             // }
             // (All items in Pages have all fields filled)
 
@@ -48,44 +56,43 @@ angular.module('gridPage', [])
 
             $scope.control = {
                 init: function () {
-                    angular.extend($scope.state.gridOptions, gridDefaults);
-                    $element
-                    if (angular.isDefined($scope.onGridLoad)) {
-                        $timeout(function () {
-                            $scope.state.pageWidth = $element.find(".grid-page")
-                                .width();
-                            $scope.state.pageHeight = $element.find(".grid-page")
-                                .height();
-                            $scope.onGridLoad($scope.state, $scope.control);
-                        });
-                    }
-                },
-                // Compiles component template
-                compileComponent: function (component) {
+                    $scope.state.gridOptions = angular.extend({}, gridDefaults, $scope.state.gridOptions);
                     $timeout(function () {
-                        var compiledContent = $compile(component.template)($scope);
-                        var elem = $element.find("[data-uuid=" + component.uuid + "]");
-                        elem.append(compiledContent);
+                        $scope.state.pageWidth = $element.find(".grid-page")
+                            .width();
+                        $scope.state.pageHeight = $element.find(".grid-page")
+                            .height();
+                        $scope.control.allowModification();
+                        $scope.control.initListeners();
+                        if (angular.isDefined($scope.ready)) {                                
+                            $scope.ready($scope.state, $scope.control);
+                        }
                     });
+                },
+                initListeners: function () {
+                    $scope.$on("grid-page-component-deleted", function(ev, component) {
+                        $scope.control.removeComponent(component);
+                    });
+                },
+                // Broadcast a change
+                broadcastChange: function () {
+                    $scope.$broadcast("grid-page-changed", $scope.state.activeComponent);
+                    if (angular.isDefined($scope.onComponentChange)) {
+                        scope.onComponentChange($scope.state.activeComponent);
+                    }
                 },
                 // Adds a component at a given x/y/page
                 placeComponent: function (component) {
-                    if (!component.uuid) {
-                        component.uuid = Date.now();
-                    }
                     var pages = $scope.state.pages;
                     for (var i = pages.length; i <= component.page; i++) {
                         pages.push([]);
                     }
+
                     $scope.state.pages[component.page].push(component);
                     $scope.control.snapToGrid(component);
-                    $scope.control.compileComponent(component);
                 },
                 // Adds a component at next available spot
                 appendComponent: function (component, startPage) {
-                    if (!component.uuid) {
-                        component.uuid = Date.now();
-                    }
                     var pages = $scope.state.pages;
                     var height = $scope.state.pageHeight;
                     var width = $scope.state.pageWidth;
@@ -122,12 +129,17 @@ angular.module('gridPage', [])
                         pages.push([component]);
                     }
                     $scope.control.snapToGrid(component);
-                    $scope.control.compileComponent(component);
+                },
+                removeComponent: function (component) {
+                    component.deleted = true;
+                },
+                addPage: function() {
+                    $scope.state.pages.push([]);
                 },
                 // Check if a location is valid for a component
                 canPlace: function (x, y, newComp, page, width, height) {
                     return page.every(function (component) {
-                            if (component === newComp) {
+                            if (component === newComp || component.deleted) {
                                 return true;
                             }
                             return (x + newComp.width <= component.x ||
@@ -141,13 +153,22 @@ angular.module('gridPage', [])
                     return Math.round(value / $scope.state.gridOptions.size) * $scope.state.gridOptions.size;
                 },
                 snapToGrid: function (component) {
+                    var pageWidth = $scope.state.pageWidth;
+                    var pageHeight = $scope.state.pageHeight;
+                    var gridSize = $scope.state.gridOptions.size;
                     component.width = $scope.control.round(component.width);
                     component.height = $scope.control.round(component.height);
                     component.x = $scope.control.round(component.x);
                     component.y = $scope.control.round(component.y);
+                    if(component.x + component.width > pageWidth) {
+                        component.width -= gridSize;
+                    }
+                    if(component.y + component.height > pageHeight) {
+                        component.height -= gridSize;
+                    }
                 },
                 allowModification: function () {
-                    interact('.draggable')
+                    interact('.mutable')
                         .draggable({
                             max: 1,
                             inertia: true,
@@ -184,23 +205,19 @@ angular.module('gridPage', [])
                                 var target = event.target;
                                 var component = $scope.state.activeComponent;
                                 var activePage = $scope.state.activePage;
-                                target.style.webkitTransform =
-                                    target.style.transform = '';
                                 var newX = component.x + (parseFloat(target.getAttribute('data-x')) || 0);
                                 var newY = component.y + (parseFloat(target.getAttribute('data-y')) || 0);
                                 if ($scope.control.canPlace(newX, newY, component, activePage, $scope.state.pageWidth, $scope.state.pageHeight)) {
                                     component.x = newX;
                                     component.y = newY;
-                                    target.style.left = newX;
-                                    target.style.top = newY;
                                 }
                                 target.setAttribute('data-x', 0);
                                 target.setAttribute('data-y', 0);
                                 $scope.$evalAsync(function (scope) {
-                                    scope.control.snapToGrid(scope.state.activeComponent);
-                                    if (angular.isDefined(scope.onComponentChange)) {
-                                        scope.onComponentChange(scope.state.activeComponent);
-                                    }
+                                    scope.control.snapToGrid(scope.state.activeComponent);    
+                                    target.style.webkitTransform =
+                                    target.style.transform = '';
+                                    scope.control.broadcastChange();
                                 });
                             }
                         })
@@ -250,16 +267,11 @@ angular.module('gridPage', [])
                             onend: function (event) {
                                 var target = event.target;
                                 var component = $scope.state.activeComponent;
-                                console.log(target);
                                 component.width = (parseFloat(target.getAttribute('data-width')) || component.width);
                                 component.height = (parseFloat(target.getAttribute('data-height')) || component.height);
-                                target.style.width = component.width;
-                                target.style.height = component.height
                                 $scope.$evalAsync(function (scope) {
                                     scope.control.snapToGrid(scope.state.activeComponent);
-                                    if (angular.isDefined(scope.onComponentChange)) {
-                                        scope.onComponentChange(scope.state.activeComponent);
-                                    }
+                                    scope.control.broadcastChange();
                                 });
                             }
                         });

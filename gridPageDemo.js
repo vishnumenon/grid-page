@@ -14,7 +14,7 @@ gridPageDemo.controller('DemoController', function DemoController($scope, $timeo
 			y: 50,
 			template: "<div style='width: 100%; height: 100%; background-color: yellow'> Hellooo </div>",
 			page: 0,
-			draggable: true
+			mutable: true
 		});
 
 		$scope.gridControl = gridControl;
@@ -27,7 +27,7 @@ gridPageDemo.controller('DemoController', function DemoController($scope, $timeo
 			width: getRandomInt(100,200),
 			height: getRandomInt(100,200),
 			template: "<div style='width: 100%; height: 100%;' ng-style=\"{'background-color':'yellow'}\"> Hellooo {{component}}</div>",
-			draggable: true
+			mutable: true
 		}, getRandomInt(0,0));
 	}
 });	
