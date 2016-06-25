@@ -12,7 +12,7 @@ angular.module('gridPage', [])
             var compiledContent = $compile($scope.component.template)($scope);
             $element.append(compiledContent);
         }
-    }
+    };
 })
 .directive('gridPage', function () {
     return {
@@ -78,7 +78,7 @@ angular.module('gridPage', [])
                 broadcastChange: function () {
                     $scope.$broadcast("grid-page-changed", $scope.state.activeComponent);
                     if (angular.isDefined($scope.onComponentChange)) {
-                        scope.onComponentChange($scope.state.activeComponent);
+                        $scope.onComponentChange($scope.state.activeComponent);
                     }
                 },
                 // Adds a component at a given x/y/page
@@ -94,7 +94,6 @@ angular.module('gridPage', [])
                 // Adds a component at next available spot
                 appendComponent: function (component, startPage) {
                     var pages = $scope.state.pages;
-                    var height = $scope.state.pageHeight;
                     var width = $scope.state.pageWidth;
                     var step = $scope.state.gridOptions.size;
                     var added = pages.slice(startPage)
@@ -284,4 +283,4 @@ angular.module('gridPage', [])
             $scope.control.init();
         }
     };
-})
+});
