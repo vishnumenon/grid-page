@@ -95,6 +95,7 @@ angular.module('gridPage', [])
                 appendComponent: function (component, startPage) {
                     var pages = $scope.state.pages;
                     var width = $scope.state.pageWidth;
+                    var height = $scope.state.pageHeight;
                     var step = $scope.state.gridOptions.size;
                     var added = pages.slice(startPage)
                         .some(function (page, i) {
