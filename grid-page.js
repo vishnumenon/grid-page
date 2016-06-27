@@ -314,7 +314,7 @@ angular.module('gridPage', [])
                                     $scope.control.broadcastChange();
                                 }
                             } 
-                        });
+                        }); 
                 },
                 serialize: function () {
                     return $scope.state;
