@@ -1,7 +1,7 @@
 angular.module('gridPage', [])
 .constant('MODULE_VERSION', '0.0.2')
 .constant('gridDefaults', {
-    size: 25,
+    size: 24,
     pageClasses: ""
 })
 .directive('gridPageComponent', function() {
@@ -148,8 +148,8 @@ angular.module('gridPage', [])
                                 x >= component.x + component.width ||
                                 y + newComp.height <= component.y ||
                                 y >= component.y + component.height);
-                        }) && x + newComp.width < width &&
-                        y + newComp.height < height;
+                        }) && x + newComp.width <= width &&
+                        y + newComp.height <= height;
                 },
                 round: function (value) {
                     return Math.round(value / $scope.state.gridOptions.size) * $scope.state.gridOptions.size;
