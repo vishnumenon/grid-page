@@ -91,7 +91,6 @@ angular.module('gridPage', [])
 
                     $scope.state.pages[component.page].push(component);
                     $scope.control.snapToGrid(component);
-                    console.log(pages)
                 },
                 // Adds a component at next available spot
                 appendComponent: function (component, startPage) {
