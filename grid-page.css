@@ -1,10 +1,58 @@
-.grid-page {
-	position: relative;
-	width: 8.5in;
-	height: 11in;
-	margin: auto;
+.grid-page
+{
+    position: relative;
+
+    width: 8.5in;
+    height: 11in;
+    margin: auto;
 }
 
-.grid-component {
+.grid-component
+{
+    box-sizing: border-box;
+}
 
+.grid-component-resize-handle,
+.grid-component-drag-handle
+{
+    position: absolute;
+    z-index: 999;
+
+    display: none;
+}
+
+.grid-component:hover > .grid-component-resize-handle,
+.grid-component:hover > .grid-component-drag-handle
+{
+    display: block;
+}
+
+.grid-component-resize-handle
+{
+    right: 0;
+    bottom: 0;
+
+    width: 0;
+    height: 0;
+
+    cursor: nwse-resize;
+
+    border-width: 0 0 40px 40px;
+    border-style: solid;
+    border-color: transparent transparent #ef6c00 transparent;
+}
+
+.grid-component-drag-handle
+{
+    top: -20px;
+    left: -20px;
+
+    width: 40px;
+    height: 40px;
+
+    cursor: move;
+
+    border: solid 4px #fff;
+    border-radius: 100%;
+    background-color: #ef6c00;
 }
