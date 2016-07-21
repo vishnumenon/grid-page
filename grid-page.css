@@ -37,18 +37,18 @@
 
     cursor: nwse-resize;
 
-    border-width: 0 0 40px 40px;
+    border-width: 0 0 30px 30px;
     border-style: solid;
     border-color: transparent transparent #ef6c00 transparent;
 }
 
 .grid-component-drag-handle
 {
-    top: -20px;
-    left: -20px;
+    top: -10px;
+    left: -10px;
 
-    width: 40px;
-    height: 40px;
+    width: 20px;
+    height: 20px;
 
     cursor: move;
 
